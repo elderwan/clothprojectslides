@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MAISON Fashion Shop - Defense Deck</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Cormorant+Garamond:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f4f1eb;
+      --bg-soft: #faf8f3;
+      --ink: #131313;
+      --muted: #6d675f;
+      --line: rgba(19, 19, 19, 0.12);
+      --card: rgba(255, 255, 255, 0.66);
+      --accent: #b8aa98;
+      --shadow: 0 24px 80px rgba(20, 20, 20, 0.08);
+      --font-display: 'Cormorant Garamond', serif;
+      --font-body: 'Manrope', sans-serif;
+      --title-size: clamp(1.9rem, 5vw, 4.8rem);
+      --h2-size: clamp(1.25rem, 3vw, 2.5rem);
+      --body-size: clamp(0.8rem, 1vw, 1rem);
+      --small-size: clamp(0.65rem, 0.8vw, 0.82rem);
+      --slide-padding: clamp(1rem, 4vw, 3.6rem);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; overflow-x: hidden; }
+    html { scroll-snap-type: y mandatory; scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-body);
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top left, rgba(184, 170, 152, 0.18), transparent 24%),
+        linear-gradient(180deg, var(--bg) 0%, var(--bg-soft) 48%, #efeae1 100%);
+    }
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(19, 19, 19, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(19, 19, 19, 0.03) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.28), transparent 75%);
+    }
+
+    .slide {
+      width: 100vw;
+      height: 100vh;
+      height: 100dvh;
+      overflow: hidden;
+      scroll-snap-align: start;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .slide-content {
+      flex: 1;
+      padding: var(--slide-padding);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .deck {
+      width: 100%;
+      max-width: 1320px;
+      margin: 0 auto;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: clamp(0.9rem, 1.2vw, 1.25rem);
+      position: relative;
+      z-index: 2;
+    }
+
+    .progress-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 3px;
+      width: 0;
+      z-index: 50;
+      background: linear-gradient(90deg, var(--ink), var(--accent));
+    }
+
+    .nav-dots {
+      position: fixed;
+      top: 50%;
+      right: 1rem;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+      z-index: 40;
+    }
+
+    .nav-dot {
+      width: 10px;
+      height: 10px;
+      border: 1px solid rgba(19, 19, 19, 0.45);
+      border-radius: 999px;
+      background: transparent;
+      cursor: pointer;
+      transition: 0.25s ease;
+    }
+
+    .nav-dot.active {
+      background: var(--ink);
+      transform: scale(1.18);
+    }
+
+    .hint {
+      position: fixed;
+      right: 1rem;
+      bottom: 1rem;
+      z-index: 40;
+      font-size: var(--small-size);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .meta, .footer-note {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      font-size: var(--small-size);
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .footer-note {
+      padding-top: 0.7rem;
+      border-top: 1px solid var(--line);
+    }
+
+    .eyebrow {
+      font-size: var(--small-size);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .title, .section-title, .quote {
+      font-family: var(--font-display);
+      letter-spacing: -0.04em;
+      line-height: 0.95;
+    }
+
+    .title { font-size: var(--title-size); max-width: 10ch; color: #f4f0e8; }
+    .section-title { font-size: var(--h2-size); max-width: 13ch; }
+    .body, .micro { font-size: var(--body-size); line-height: 1.65; color: var(--muted); }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 0.42fr) minmax(0, 0.58fr);
+      gap: clamp(1rem, 2vw, 2rem);
+      flex: 1;
+      min-height: 0;
+      align-items: end;
+    }
+
+    .split {
+      display: grid;
+      grid-template-columns: minmax(0, 0.4fr) minmax(0, 0.6fr);
+      gap: 1rem;
+      flex: 1;
+      min-height: 0;
+    }
+
+    .gallery-two, .gallery-three {
+      display: grid;
+      gap: 1rem;
+      min-height: 0;
+    }
+
+    .gallery-two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .gallery-three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+    .card, .text-panel, .flow-node, .mini-panel {
+      background: var(--card);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+    }
+
+    .text-panel {
+      padding: 1rem 1.1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      min-height: 0;
+    }
+
+    .dark-panel {
+      background: linear-gradient(160deg, rgba(18, 18, 18, 0.98), rgba(34, 34, 34, 0.92));
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: #f3efe6;
+    }
+
+    .dark-panel .eyebrow, .dark-panel .body, .dark-panel .micro, .dark-panel li {
+      color: rgba(243, 239, 230, 0.75);
+    }
+
+    .card {
+      position: relative;
+      overflow: hidden;
+      min-height: 0;
+    }
+
+    .card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top center;
+      display: block;
+      cursor: zoom-in;
+      transition: transform 0.35s ease, filter 0.35s ease;
+    }
+
+    .card:hover img {
+      transform: scale(1.02);
+      filter: saturate(1.02);
+    }
+
+    .tall { min-height: min(54vh, 440px); }
+    .medium { min-height: min(34vh, 270px); }
+    .short { min-height: min(24vh, 210px); }
+
+    .caption {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 0.75rem 0.9rem;
+      background: linear-gradient(180deg, transparent, rgba(16, 16, 16, 0.72));
+      color: rgba(255, 255, 255, 0.92);
+      font-size: var(--small-size);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.55rem;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 2.1rem;
+      padding: 0 0.9rem;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.62);
+      color: var(--muted);
+      font-size: var(--small-size);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .tiny-list {
+      list-style: none;
+      display: grid;
+      gap: 0.45rem;
+    }
+
+    .tiny-list li {
+      position: relative;
+      padding-left: 0.9rem;
+      font-size: clamp(0.76rem, 0.95vw, 0.9rem);
+      line-height: 1.55;
+      color: var(--muted);
+    }
+
+    .tiny-list li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0.6em;
+      width: 0.32rem;
+      height: 0.32rem;
+      border-radius: 999px;
+      background: var(--accent);
+    }
+
+    .flow-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 0.75rem;
+    }
+
+    .flow-node {
+      min-height: 8.2rem;
+      padding: 0.95rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+      justify-content: space-between;
+    }
+
+    .flow-node strong {
+      font-size: var(--small-size);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    .flow-node span {
+      font-size: clamp(0.76rem, 0.95vw, 0.88rem);
+      line-height: 1.55;
+      color: var(--muted);
+    }
+
+    .quote {
+      font-size: clamp(1.2rem, 2vw, 2rem);
+      max-width: 22ch;
+    }
+
+    body.lightbox-open {
+      overflow: hidden;
+    }
+
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: clamp(1rem, 4vw, 2.5rem);
+      background: rgba(10, 10, 10, 0.84);
+      backdrop-filter: blur(14px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+      z-index: 120;
+    }
+
+    .lightbox.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .lightbox-dialog {
+      width: min(92vw, 1480px);
+      max-height: 90vh;
+      max-height: 90dvh;
+      display: grid;
+      grid-template-rows: minmax(0, 1fr) auto;
+      gap: 0.85rem;
+    }
+
+    .lightbox-frame {
+      min-height: 0;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: rgba(255, 255, 255, 0.06);
+      box-shadow: 0 28px 120px rgba(0, 0, 0, 0.32);
+      overflow: hidden;
+    }
+
+    .lightbox-frame img {
+      width: 100%;
+      height: 100%;
+      max-height: calc(90vh - 5rem);
+      max-height: calc(90dvh - 5rem);
+      object-fit: contain;
+      display: block;
+      background: rgba(0, 0, 0, 0.18);
+    }
+
+    .lightbox-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      color: rgba(255, 255, 255, 0.88);
+      font-size: var(--small-size);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .lightbox-copy {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .lightbox-close {
+      min-width: 2.8rem;
+      min-height: 2.8rem;
+      padding: 0 1rem;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.08);
+      color: rgba(255, 255, 255, 0.92);
+      cursor: pointer;
+      font: inherit;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      transition: background 0.25s ease, border-color 0.25s ease;
+    }
+
+    .lightbox-close:hover {
+      background: rgba(255, 255, 255, 0.16);
+      border-color: rgba(255, 255, 255, 0.34);
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1), transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .slide.visible .reveal {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (max-width: 980px) {
+      .hero, .split, .gallery-two, .gallery-three, .flow-grid { grid-template-columns: 1fr; }
+      .nav-dots { display: none; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.2s !important; }
+      html { scroll-behavior: auto; }
+    }
+  </style>
+</head>
+<body>
+  <div class="progress-bar" aria-hidden="true"></div>
+  <nav class="nav-dots" aria-label="Slide navigation"></nav>
+  <div class="hint">Arrow Keys / Scroll</div>
+  <div class="lightbox" aria-hidden="true">
+    <div class="lightbox-dialog" role="dialog" aria-modal="true" aria-label="Expanded slide image">
+      <div class="lightbox-frame">
+        <img src="" alt="">
+      </div>
+      <div class="lightbox-meta">
+        <div class="lightbox-copy">
+          <span class="lightbox-title">Expanded View</span>
+          <span class="lightbox-subtitle">Click outside or press Esc to close</span>
+        </div>
+        <button class="lightbox-close" type="button" aria-label="Close image preview">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <section class="slide" data-title="Cover" style="background: radial-gradient(circle at 20% 20%, rgba(184,170,152,0.18), transparent 24%), linear-gradient(145deg, #111111 0%, #1c1c1c 42%, #151515 100%);">
+    <div class="slide-content">
+      <div class="deck">
+        <div class="meta reveal"><span>Project Defense / Fashion Commerce</span><span>01</span></div>
+        <div class="hero">
+          <div class="text-panel dark-panel reveal">
+            <p class="eyebrow">Fashion E-commerce Course Project</p>
+            <h1 class="title">MAISON Fashion Shop System</h1>
+            <p class="body">A fashion storefront and back-office system built from the real repository, combining visual brand identity, shopping flow, order handling, and admin operation.</p>
+            <div class="pill-row">
+              <span class="pill">Express</span>
+              <span class="pill">TypeScript</span>
+              <span class="pill">EJS</span>
+              <span class="pill">Supabase</span>
+              <span class="pill">Cloudinary</span>
+            </div>
+          </div>
+          <div class="card tall reveal">
+            <img src="https://res.cloudinary.com/dewxaup4t/image/upload/v1773221199/maison/presentation/home-2026-03-11T09-26-33-365Z.png" alt="MAISON homepage">
+            <div class="caption"><span>Homepage</span><span>Brand-first Landing</span></div>
+          </div>
+        </div>
+        <div class="footer-note reveal"><span>Minimal Fashion Direction</span><span>Real Runtime Screens</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-title="Snapshot">
+    <div class="slide-content">
+      <div class="deck">
+        <div class="meta reveal"><span>Project Snapshot</span><span>02</span></div>
+        <p class="eyebrow reveal">Image-led Overview</p>
+        <h2 class="section-title reveal">A B2C fashion shop with a curated storefront and a working admin panel.</h2>
+        <div class="gallery-two reveal">
+          <div class="card tall">
+            <img src="https://res.cloudinary.com/dewxaup4t/image/upload/v1773221199/maison/presentation/home-2026-03-11T09-26-33-365Z.png" alt="Homepage banner">
+            <div class="caption"><span>Homepage</span><span>Hero Banner</span></div>
+          </div>
+          <div class="card tall">
+            <img src="https://res.cloudinary.com/dewxaup4t/image/upload/v1773221202/maison/presentation/products-women-2026-03-11T09-26-33-365Z.png" alt="Product listing">
+            <div class="caption"><span>Category Page</span><span>Search + Filter</span></div>
+          </div>
+        </div>
+        <div class="pill-row reveal">
+          <span class="pill">Client + Admin</span>
+          <span class="pill">Brand-style UI</span>
+          <span class="pill">Order Workflow</span>
+          <span class="pill">Inventory Logic</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-title="Storefront">
+    <div class="slide-content">
+      <div class="deck">
+        <div class="meta reveal"><span>Storefront Experience</span><span>03</span></div>
+        <div class="split">
+          <div class="text-panel reveal">
+            <p class="eyebrow">Visual Direction</p>
+            <h2 class="section-title">The shop is designed to feel like a fashion brand website before it feels like a dashboard of products.</h2>
+            <ul class="tiny-list">
+              <li>Women / Men / Kids navigation</li>
+              <li>Configurable homepage banners</li>
+              <li>Curated sections like new arrivals and trend blocks</li>
+            </ul>
+          </div>
+          <div class="gallery-two reveal">
+            <div class="card medium">
+              <img src="https://res.cloudinary.com/dewxaup4t/image/upload/v1773221199/maison/presentation/home-2026-03-11T09-26-33-365Z.png" alt="Hero">
+              <div class="caption"><span>Hero</span><span>Editorial Entry</span></div>
+            </div>
+            <div class="card medium">
+              <img src="https://res.cloudinary.com/dewxaup4t/image/upload/v1773221202/maison/presentation/products-women-2026-03-11T09-26-33-365Z.png" alt="Grid">
+              <div class="caption"><span>Grid</span><span>Product Search</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-title="Product View">
+    <div class="slide-content">
+      <div class="deck">
+        <div class="meta reveal"><span>Product Discovery</span><span>04</span></div>
+        <div class="split">
+          <div class="card tall reveal">
+            <img src="https://res.cloudinary.com/dewxaup4t/image/upload/v1773221202/maison/presentation/product-detail-2026-03-11T09-26-33-365Z.png" alt="Product detail">
+            <div class="caption"><span>Detail Page</span><span>Gallery + Size + Related</span></div>
+          </div>
+          <div class="text-panel reveal">
+            <p class="eyebrow">What is working</p>
+            <h2 class="section-title">Image gallery, size selection, related products, click tracking, and backend-driven filtering are already connected.</h2>
+            <div class="pill-row">
+              <span class="pill">Keyword Search</span>
+              <span class="pill">Category Filter</span>
+              <span class="pill">Pagination</span>
+              <span class="pill">Related Items</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-title="User Journey">
+    <div class="slide-content">
+      <div class="deck">
+        <div class="meta reveal"><span>User Journey</span><span>05</span></div>
+        <p class="eyebrow reveal">Client Flow Diagram</p>
+        <div class="flow-grid reveal">
+          <div class="flow-node"><strong>01 Browse</strong><span>Enter from homepage or category listing and scan product cards.</span></div>
+          <div class="flow-node"><strong>02 Inspect</strong><span>Open the product page for gallery, size, wishlist, and related products.</span></div>
+          <div class="flow-node"><strong>03 Add to Cart</strong><span>Choose size and move into a cart with live summary updates.</span></div>
+          <div class="flow-node"><strong>04 Confirm Order</strong><span>Backend RPC validates stock, creates order items, and clears the cart.</span></div>
+          <div class="flow-node"><strong>05 Continue</strong><span>Manage address, payment confirmation, and order detail afterward.</span></div>
+        </div>
+        <div class="gallery-three reveal">
+          <div class="card short">
+            <img src="https://res.cloudinary.com/dewxaup4t/image/upload/v1773221202/maison/presentation/products-women-2026-03-11T09-26-33-365Z.png" alt="Browse stage">
+            <div class="caption"><span>Browse</span><span>Listing</span></div>
+          </div>
+          <div class="card short">
+            <img src="https://res.cloudinary.com/dewxaup4t/image/upload/v1773221202/maison/presentation/product-detail-2026-03-11T09-26-33-365Z.png" alt="Inspect stage">
+            <div class="caption"><span>Inspect</span><span>Detail</span></div>
+          </div>
+          <div class="card short">
+            <img src="https://res.cloudinary.com/dewxaup4t/image/upload/v1773221198/maison/presentation/cart-flow-2026-03-11T09-26-33-365Z.png" alt="Cart stage">
+            <div class="caption"><span>Cart</span><span>Summary</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-title="Account">
+    <div class="slide-content">
+      <div class="deck">
+        <div class="meta reveal"><span>Account Experience</span><span>06</span></div>
+        <p class="eyebrow reveal">Retention and Reuse</p>
+        <div class="gallery-three reveal">
+          <div class="card medium">
+            <img src="https://res.cloudinary.com/dewxaup4t/image/upload/v1773222031/maison/presentation/profile-2026-03-11T09-40-28-466Z.png" alt="Profile">
+            <div class="caption"><span>Profile</span><span>Personal Hub</span></div>
+          </div>
+          <div class="card medium">
+            <img src="https://res.cloudinary.com/dewxaup4t/image/upload/v1773221195/maison/presentation/address-book-2026-03-11T09-26-33-365Z.png" alt="Address book">
+            <div class="caption"><span>Address Book</span><span>Reusable Delivery Data</span></div>
+          </div>
+          <div class="card medium">
+            <img src="https://res.cloudinary.com/dewxaup4t/image/upload/v1773221200/maison/presentation/order-detail-2026-03-11T09-26-33-365Z.png" alt="Order detail">
+            <div class="caption"><span>Order Detail</span><span>Status + Payment</span></div>
+          </div>
+        </div>
+        <div class="pill-row reveal">
+          <span class="pill">Register / Login</span>
+          <span class="pill">Address Management</span>
+          <span class="pill">Wishlist</span>
+          <span class="pill">Order History</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-title="Admin Screens">
+    <div class="slide-content">
+      <div class="deck">
+        <div class="meta reveal"><span>Admin Screens</span><span>07</span></div>
+        <p class="eyebrow reveal">Operations-facing Interface</p>
+        <div class="gallery-three reveal">
+          <div class="card medium">
+            <img src="https://res.cloudinary.com/dewxaup4t/image/upload/v1773221197/maison/presentation/admin-dashboard-2026-03-11T09-26-33-365Z.png" alt="Admin dashboard">
+            <div class="caption"><span>Dashboard</span><span>KPI View</span></div>
+          </div>
+          <div class="card medium">
+            <img src="https://res.cloudinary.com/dewxaup4t/image/upload/v1773221197/maison/presentation/admin-products-2026-03-11T09-26-33-365Z.png" alt="Admin products">
+            <div class="caption"><span>Products</span><span>Catalog Control</span></div>
+          </div>
+          <div class="card medium">
+            <img src="https://res.cloudinary.com/dewxaup4t/image/upload/v1773222030/maison/presentation/admin-orders-2026-03-11T09-40-28-466Z.png" alt="Admin orders">
+            <div class="caption"><span>Orders</span><span>Search + Status</span></div>
+          </div>
+        </div>
+        <div class="pill-row reveal">
+          <span class="pill">Admin Login</span>
+          <span class="pill">Dashboard Metrics</span>
+          <span class="pill">Product Management</span>
+          <span class="pill">Order Management</span>
+          <span class="pill">Banner + Category Settings</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-title="Admin Journey">
+    <div class="slide-content">
+      <div class="deck">
+        <div class="meta reveal"><span>Admin Journey</span><span>08</span></div>
+        <p class="eyebrow reveal">Back-office Flow Diagram</p>
+        <div class="flow-grid reveal">
+          <div class="flow-node"><strong>01 Sign In</strong><span>Role-protected admin entry point.</span></div>
+          <div class="flow-node"><strong>02 Monitor</strong><span>Check product, order, user, and revenue metrics.</span></div>
+          <div class="flow-node"><strong>03 Maintain</strong><span>Create or update products, images, categories, and banners.</span></div>
+          <div class="flow-node"><strong>04 Process</strong><span>Search orders and update status through controlled transitions.</span></div>
+          <div class="flow-node"><strong>05 Optimize</strong><span>Adjust storefront content and track customer activity.</span></div>
+        </div>
+        <div class="gallery-two reveal">
+          <div class="card short">
+            <img src="https://res.cloudinary.com/dewxaup4t/image/upload/v1773221197/maison/presentation/admin-dashboard-2026-03-11T09-26-33-365Z.png" alt="Monitor stage">
+            <div class="caption"><span>Monitor</span><span>Dashboard</span></div>
+          </div>
+          <div class="card short">
+            <img src="https://res.cloudinary.com/dewxaup4t/image/upload/v1773222030/maison/presentation/admin-orders-2026-03-11T09-40-28-466Z.png" alt="Process stage">
+            <div class="caption"><span>Process</span><span>Orders</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-title="System">
+    <div class="slide-content">
+      <div class="deck">
+        <div class="meta reveal"><span>Architecture & Data</span><span>09</span></div>
+        <div class="gallery-two reveal">
+          <div class="text-panel">
+            <p class="eyebrow">Layered Structure</p>
+            <h2 class="section-title">Views, controllers, services, and models keep the project readable and scalable.</h2>
+            <div class="pill-row">
+              <span class="pill">Views</span>
+              <span class="pill">Controllers</span>
+              <span class="pill">Services</span>
+              <span class="pill">Models</span>
+              <span class="pill">Middleware</span>
+            </div>
+          </div>
+          <div class="text-panel">
+            <p class="eyebrow">Core Tables</p>
+            <div class="pill-row">
+              <span class="pill">categories</span>
+              <span class="pill">products</span>
+              <span class="pill">product_images</span>
+              <span class="pill">users</span>
+              <span class="pill">user_addresses</span>
+              <span class="pill">cart_items</span>
+              <span class="pill">orders</span>
+              <span class="pill">order_items</span>
+              <span class="pill">wishlist_items</span>
+              <span class="pill">home_banners</span>
+            </div>
+            <p class="micro">The most important backend detail is the RPC-driven order creation flow that validates stock, creates the order, inserts line items, and deducts inventory.</p>
+          </div>
+        </div>
+        <div class="footer-note reveal"><span>Backend Strength</span><span>Atomic Order + Inventory Flow</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-title="Reality Check">
+    <div class="slide-content">
+      <div class="deck">
+        <div class="meta reveal"><span>Reality Check</span><span>10</span></div>
+        <div class="split">
+          <div class="text-panel dark-panel reveal">
+            <p class="eyebrow">Already Working</p>
+            <h2 class="section-title">This is already a complete course-level commerce prototype.</h2>
+            <div class="pill-row">
+              <span class="pill">Runnable Build</span>
+              <span class="pill">Client Flow</span>
+              <span class="pill">Admin Flow</span>
+              <span class="pill">Inventory Logic</span>
+            </div>
+          </div>
+          <div class="text-panel reveal">
+            <p class="eyebrow">Current Limits</p>
+            <ul class="tiny-list">
+              <li>Payment is demo-style, not a live gateway.</li>
+              <li>Guest cart support is not fully implemented.</li>
+              <li>Project-specific automated tests are still missing.</li>
+              <li>Sales-based sorting is not fully completed in the model layer.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="text-panel reveal">
+          <p class="quote">The project already looks like a fashion product and behaves like a working commerce workflow.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    class SlidePresentation {
+      constructor() {
+        this.slides = Array.from(document.querySelectorAll('.slide'));
+        this.current = 0;
+        this.locked = false;
+        this.touchStartY = 0;
+        this.progressBar = document.querySelector('.progress-bar');
+        this.nav = document.querySelector('.nav-dots');
+        this.lightbox = document.querySelector('.lightbox');
+        this.lightboxImage = this.lightbox.querySelector('.lightbox-frame img');
+        this.lightboxTitle = this.lightbox.querySelector('.lightbox-title');
+        this.lightboxSubtitle = this.lightbox.querySelector('.lightbox-subtitle');
+        this.observe();
+        this.bindKeys();
+        this.bindWheel();
+        this.bindTouch();
+        this.buildDots();
+        this.setupLightbox();
+        this.updateProgress();
+        window.addEventListener('scroll', () => this.updateProgress(), { passive: true });
+      }
+
+      go(index) {
+        const next = Math.max(0, Math.min(index, this.slides.length - 1));
+        this.current = next;
+        this.slides[next].scrollIntoView({ behavior: 'smooth', block: 'start' });
+        this.updateDots();
+      }
+
+      throttle() {
+        if (this.locked) return true;
+        this.locked = true;
+        window.setTimeout(() => { this.locked = false; }, 700);
+        return false;
+      }
+
+      observe() {
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('visible');
+              this.current = this.slides.indexOf(entry.target);
+              this.updateDots();
+            }
+          });
+        }, { threshold: 0.55 });
+        this.slides.forEach((slide) => observer.observe(slide));
+      }
+
+      bindKeys() {
+        document.addEventListener('keydown', (event) => {
+          if (event.key === 'Escape' && this.isLightboxOpen()) {
+            event.preventDefault();
+            this.closeLightbox();
+            return;
+          }
+          if (this.isLightboxOpen()) return;
+          if (['ArrowDown', 'ArrowRight', 'PageDown', ' '].includes(event.key)) {
+            event.preventDefault();
+            this.go(this.current + 1);
+          }
+          if (['ArrowUp', 'ArrowLeft', 'PageUp'].includes(event.key)) {
+            event.preventDefault();
+            this.go(this.current - 1);
+          }
+        });
+      }
+
+      bindWheel() {
+        window.addEventListener('wheel', (event) => {
+          if (this.isLightboxOpen()) return;
+          if (Math.abs(event.deltaY) < 35 || this.throttle()) return;
+          if (event.deltaY > 0) this.go(this.current + 1);
+          if (event.deltaY < 0) this.go(this.current - 1);
+        }, { passive: true });
+      }
+
+      bindTouch() {
+        window.addEventListener('touchstart', (event) => {
+          if (this.isLightboxOpen()) return;
+          this.touchStartY = event.touches[0].clientY;
+        }, { passive: true });
+        window.addEventListener('touchend', (event) => {
+          if (this.isLightboxOpen()) return;
+          const delta = this.touchStartY - event.changedTouches[0].clientY;
+          if (Math.abs(delta) < 40 || this.throttle()) return;
+          if (delta > 0) this.go(this.current + 1);
+          if (delta < 0) this.go(this.current - 1);
+        }, { passive: true });
+      }
+
+      setupLightbox() {
+        const closeButton = this.lightbox.querySelector('.lightbox-close');
+        const images = Array.from(document.querySelectorAll('.card img'));
+
+        images.forEach((image) => {
+          image.setAttribute('role', 'button');
+          image.setAttribute('tabindex', '0');
+          image.setAttribute('aria-label', `${image.alt || 'Slide image'} - click to enlarge`);
+          image.addEventListener('click', () => this.openLightbox(image));
+          image.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter' || event.key === ' ') {
+              event.preventDefault();
+              this.openLightbox(image);
+            }
+          });
+        });
+
+        closeButton.addEventListener('click', () => this.closeLightbox());
+        this.lightbox.addEventListener('click', (event) => {
+          if (event.target === this.lightbox) this.closeLightbox();
+        });
+      }
+
+      isLightboxOpen() {
+        return this.lightbox.classList.contains('open');
+      }
+
+      openLightbox(image) {
+        const caption = image.closest('.card')?.querySelector('.caption');
+        const title = caption?.children[0]?.textContent || image.alt || 'Expanded View';
+        const subtitle = caption?.children[1]?.textContent || 'Click outside or press Esc to close';
+
+        this.lightboxImage.src = image.currentSrc || image.src;
+        this.lightboxImage.alt = image.alt || title;
+        this.lightboxTitle.textContent = title;
+        this.lightboxSubtitle.textContent = subtitle;
+        this.lightbox.classList.add('open');
+        this.lightbox.setAttribute('aria-hidden', 'false');
+        document.body.classList.add('lightbox-open');
+      }
+
+      closeLightbox() {
+        this.lightbox.classList.remove('open');
+        this.lightbox.setAttribute('aria-hidden', 'true');
+        document.body.classList.remove('lightbox-open');
+      }
+
+      buildDots() {
+        this.nav.innerHTML = '';
+        this.slides.forEach((slide, index) => {
+          const dot = document.createElement('button');
+          dot.className = 'nav-dot';
+          dot.type = 'button';
+          dot.setAttribute('aria-label', slide.dataset.title || `Slide ${index + 1}`);
+          dot.addEventListener('click', () => this.go(index));
+          this.nav.appendChild(dot);
+        });
+        this.updateDots();
+      }
+
+      updateDots() {
+        Array.from(this.nav.children).forEach((dot, index) => {
+          dot.classList.toggle('active', index === this.current);
+        });
+      }
+
+      updateProgress() {
+        const max = document.documentElement.scrollHeight - window.innerHeight;
+        const ratio = max > 0 ? window.scrollY / max : 0;
+        this.progressBar.style.width = `${ratio * 100}%`;
+      }
+    }
+
+    new SlidePresentation();
+  </script>
+</body>
+</html>
